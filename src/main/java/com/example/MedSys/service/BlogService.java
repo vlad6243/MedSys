@@ -3,6 +3,7 @@ package com.example.MedSys.service;
 import com.example.MedSys.domain.Blog;
 import com.example.MedSys.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class BlogService {
         this.blogRepository = blogRepository;
     }
 
-    public List getAll(){
+    public List<Blog> getAll(Pageable pageable){
         return blogRepository.findAll();
     }
 

@@ -1,6 +1,5 @@
 package com.example.MedSys.controller;
 
-import com.example.MedSys.domain.Role;
 import com.example.MedSys.domain.User;
 import com.example.MedSys.dto.UserForm;
 import com.example.MedSys.security.jwt.JwtTokenProvider;
@@ -12,9 +11,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,7 +40,7 @@ public class AuthController {
         return userService.create(userForm);
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody UserForm requestDto) {
         try {
             String username = requestDto.getUsername();

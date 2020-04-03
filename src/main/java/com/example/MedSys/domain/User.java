@@ -1,24 +1,23 @@
 package com.example.MedSys.domain;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
 @Builder
-@Table(name = "users")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter @Setter
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
@@ -27,9 +26,12 @@ public class User implements UserDetails {
 
     @NotBlank
     private String username;
-    @NotBlank
+
+    @Email(message = "Email is not correct")
+    @NotBlank(message = "Email is not be empty")
     private String email;
 
+    @NotBlank
     private String password;
 
     private boolean active;
@@ -38,6 +40,12 @@ public class User implements UserDetails {
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Blog> blogs;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Event> events = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
