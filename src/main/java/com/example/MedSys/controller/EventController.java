@@ -4,6 +4,7 @@ package com.example.MedSys.controller;
 import com.example.MedSys.domain.Event;
 import com.example.MedSys.domain.User;
 import com.example.MedSys.repository.EventRepository;
+import com.example.MedSys.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,12 @@ public class EventController {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private EventService eventService;
+
     @GetMapping
     public List<Event> getAllUsersEvent(@AuthenticationPrincipal User user){
-        return eventRepository.findAll();
+        return eventService.findAllEventsForUser(user);
     }
 
     @PostMapping("/add")

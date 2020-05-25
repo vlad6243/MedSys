@@ -9,17 +9,18 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "events")
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String description;
+    private String title;
 
-    private LocalDateTime timeEvent;
+    private String start;
 
-    private Long DoctorId;
+    private Long doctorId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

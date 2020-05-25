@@ -3,8 +3,10 @@ package com.example.MedSys.service;
 import com.example.MedSys.domain.Role;
 import com.example.MedSys.domain.User;
 import com.example.MedSys.dto.UserForm;
+import com.example.MedSys.dto.UserProfile;
 import com.example.MedSys.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,24 +55,31 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public User updateUser(UserForm userUpdate, User currentUser){
-        if (!userUpdate.getEmail().isBlank()){
+    public void updateUser(UserProfile userUpdate, User currentUser){
+        if(!userUpdate.getEmail().isEmpty()){
             currentUser.setEmail(userUpdate.getEmail());
         }
 
-        if (!userUpdate.getPassword().isBlank()){
-            currentUser.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
+        if(!userUpdate.getFirstName().isEmpty()){
+            currentUser.setFirstName(userUpdate.getEmail());
         }
 
-        if(!userUpdate.getUsername().isBlank()){
-            currentUser.setUsername(userUpdate.getUsername());
+        if(!userUpdate.getLastName().isEmpty()){
+            currentUser.setLastName(userUpdate.getEmail());
         }
 
-        return userRepository.save(currentUser);
+        if(!userUpdate.getAge().isEmpty()){
+            currentUser.setAge(userUpdate.getAge());
+        }
+
+        if (!userUpdate.getPhoneNumber().isEmpty()){
+            currentUser.setPhoneNumber(userUpdate.getPhoneNumber());
+        }
+
+        userRepository.save(currentUser);
     }
 
-    public void updateRole(User user, String username, Map<String, String> form) {
-        user.setUsername(username);
+    public void updateRole(User user,  Map<String, String> form) {
 
         Set<String> roles = Arrays.stream(Role.values())
                 .map(Role::name)
@@ -85,6 +94,10 @@ public class UserService implements UserDetailsService {
         }
 
         userRepository.save(user);
+    }
+
+    public List<User> getRoleUser(){
+        return userRepository.findByRoles(Role.DOCTOR);
     }
 
     public void userDelete(Long userId){

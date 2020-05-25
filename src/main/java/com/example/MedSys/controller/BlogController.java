@@ -1,26 +1,25 @@
 package com.example.MedSys.controller;
 
 import com.example.MedSys.domain.Blog;
-import com.example.MedSys.domain.User;
 import com.example.MedSys.repository.BlogRepository;
 import com.example.MedSys.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/blog")
+@RequestMapping("/api/blog")
 public class BlogController {
 
     @Value("${upload.path}")
@@ -32,19 +31,27 @@ public class BlogController {
     @Autowired
     private BlogRepository blogRepository;
 
-    @GetMapping
-    public List<Blog> getAll(@PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC)Pageable pageable){
-        return blogService.getAll(pageable);
+    @GetMapping("/all")
+    public List<Blog> getAll(){
+        //(@PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
+        return blogRepository.findAll();
     }
 
     @PostMapping("/add")
-    public Blog add(@AuthenticationPrincipal User user,
-                    @RequestParam(required = false, name = "file") MultipartFile file,
-                    @Valid @RequestBody Blog blog) throws IOException {
-        blog.setAuthor(user);
+    public ResponseEntity<?> add(@RequestParam(required = false, name = "file") MultipartFile file,
+                                 @Valid @RequestBody Blog blog) throws IOException {
         saveFile(blog, file);
+        try {
+            blogRepository.save(blog);
 
-        return blogRepository.save(blog);
+            Map<Object, Object> response = new HashMap<>();
+            response.put("blog.id", blog.getId());
+
+            return ResponseEntity.ok(response);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Bad inputs value");
+        }
+
     }
 
     private void saveFile(@Valid Blog blog, @RequestParam("file") MultipartFile file) throws IOException {

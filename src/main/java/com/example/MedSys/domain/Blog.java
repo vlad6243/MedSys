@@ -22,9 +22,5 @@ public class Blog {
     @NotBlank(message = "Please provide a main text")
     private String text;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private User author;
-
     private String imgUrl;
 }

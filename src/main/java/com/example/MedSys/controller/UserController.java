@@ -1,9 +1,49 @@
 package com.example.MedSys.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.MedSys.domain.User;
+import com.example.MedSys.dto.UserProfile;
+import com.example.MedSys.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/profile")
+    public UserProfile getProfile(@AuthenticationPrincipal User user){
+        return new UserProfile(user);
+    }
+
+    @GetMapping("/doctors")
+    public List<User> getRoleProfile(){
+        return userService.getRoleUser();
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal User currentUser,
+                                           @RequestBody UserProfile userProfile){
+        try {
+            userService.updateUser(userProfile,currentUser);
+
+            Map<Object, Object> response = new HashMap<>();
+            response.put("profile", userProfile);
+
+            return ResponseEntity.ok(response);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Bad inputs value");
+        }
+
+    }
 }
