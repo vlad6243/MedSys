@@ -1,15 +1,16 @@
 package com.example.MedSys.dto;
 
-import com.example.MedSys.domain.Role;
 import com.example.MedSys.domain.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Set;
-
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfile {
+public class DoctorProfile {
 
     private String username;
     private String email;
@@ -19,15 +20,18 @@ public class UserProfile {
     private String age;
     private String phoneNumber;
 
-    private Set<Role> roles;
+    private String position;
+    private String experience;
 
-    public UserProfile(User user) {
+    public DoctorProfile(User user) {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.age = user.getAge();
         this.phoneNumber = user.getPhoneNumber();
-        this.roles = user.getRoles();
+        this.position = user.getPosition();
+        this.experience = user.getExperience();
     }
+
 }

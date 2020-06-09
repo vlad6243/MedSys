@@ -1,7 +1,9 @@
 package com.example.MedSys.controller;
 
 import com.example.MedSys.domain.User;
+import com.example.MedSys.dto.DoctorProfile;
 import com.example.MedSys.dto.UserProfile;
+import com.example.MedSys.dto.UserRoleDto;
 import com.example.MedSys.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +28,17 @@ public class UserController {
         return new UserProfile(user);
     }
 
+    @GetMapping("/doctor")
+    public DoctorProfile getDoctorProfile(@AuthenticationPrincipal User user){
+        return new DoctorProfile(user);
+    }
+
     @GetMapping("/doctors")
     public List<User> getRoleProfile(){
         return userService.getRoleUser();
     }
 
-    @PostMapping("/update")
+    @PostMapping("/updateUser")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal User currentUser,
                                            @RequestBody UserProfile userProfile){
         try {
@@ -45,5 +52,41 @@ public class UserController {
             throw new BadCredentialsException("Bad inputs value");
         }
 
+    }
+
+    @PostMapping("/updateDoctor")
+    public ResponseEntity<?> updateDoctorProfile(@AuthenticationPrincipal User currentUser,
+                                           @RequestBody DoctorProfile doctorProfile){
+        try {
+            userService.updateDoctor(doctorProfile,currentUser);
+
+            Map<Object, Object> response = new HashMap<>();
+            response.put("profile", doctorProfile);
+
+            return ResponseEntity.ok(response);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Bad inputs value");
+        }
+
+    }
+
+    @GetMapping("/allUsers")
+    public List<User> getAllUser(){
+        return userService.findAll();
+    }
+
+    @PostMapping("/changeRoleAdmin")
+    public void changeRoleAdmin(@RequestBody UserProfile userProfile){
+        userService.changeRoleAdmin(userProfile);
+    }
+
+    @PostMapping("/changeRoleDoctor")
+    public void changeRoleDoctor(@RequestBody UserProfile userProfile){
+        userService.changeRoleDoctor(userProfile);
+    }
+
+    @GetMapping("/roles")
+    public UserRoleDto getRoles(@AuthenticationPrincipal User user){
+        return new UserRoleDto(user);
     }
 }

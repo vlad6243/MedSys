@@ -17,4 +17,8 @@ public class EventService {
     public List<Event> findAllEventsForUser(User user){
         return eventRepository.findByUser(user);
     }
+
+    public List<Event> findAllEventsForDoctor(User user){
+        return eventRepository.findByDoctorUsernameOrderByIdDesc(user.getUsername());
+    }
 }

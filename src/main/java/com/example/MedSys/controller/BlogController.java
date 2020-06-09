@@ -5,6 +5,10 @@ import com.example.MedSys.repository.BlogRepository;
 import com.example.MedSys.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
@@ -32,14 +36,22 @@ public class BlogController {
     private BlogRepository blogRepository;
 
     @GetMapping("/all")
-    public List<Blog> getAll(){
+    public Page<Blog> getAll(@PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable){
         //(@PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
-        return blogRepository.findAll();
+        return blogRepository.findAll(pageable);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestParam(required = false, name = "file") MultipartFile file,
-                                 @Valid @RequestBody Blog blog) throws IOException {
+    public ResponseEntity<?> add(@RequestParam(required = false, name = "image") MultipartFile file,
+                                 @RequestParam("header") String header,
+                                 @RequestParam("text") String text
+                                 ) throws IOException {
+
+        Blog blog = Blog.builder()
+                .header(header)
+                .text(text)
+                .build();
+
         saveFile(blog, file);
         try {
             blogRepository.save(blog);

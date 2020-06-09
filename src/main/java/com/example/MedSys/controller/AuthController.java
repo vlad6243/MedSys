@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody UserForm userForm){
+    public boolean register(@RequestBody UserForm userForm){
         return userService.create(userForm);
     }
 

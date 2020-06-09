@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "blogs")
 public class Blog {
 

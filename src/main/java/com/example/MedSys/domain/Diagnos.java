@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Diagnosis {
+public class Diagnos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,6 +25,8 @@ public class Diagnosis {
     private String startDate;
 
     private String endDate;
+
+    private String patient;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -2,11 +2,11 @@ package com.example.MedSys.service;
 
 import com.example.MedSys.domain.Role;
 import com.example.MedSys.domain.User;
+import com.example.MedSys.dto.DoctorProfile;
 import com.example.MedSys.dto.UserForm;
 import com.example.MedSys.dto.UserProfile;
 import com.example.MedSys.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public User create(UserForm userInputs){
+    public boolean create(UserForm userInputs){
         User newUser = User.builder()
                 .username(userInputs.getUsername())
                 .email(userInputs.getEmail())
@@ -47,8 +47,9 @@ public class UserService implements UserDetailsService {
                 .active(true)
                 .roles(Collections.singleton(Role.USER))
                 .build();
+        userRepository.save(newUser);
 
-        return userRepository.save(newUser);
+        return true;
     }
 
     public List<User> findAll(){
@@ -61,11 +62,11 @@ public class UserService implements UserDetailsService {
         }
 
         if(!userUpdate.getFirstName().isEmpty()){
-            currentUser.setFirstName(userUpdate.getEmail());
+            currentUser.setFirstName(userUpdate.getFirstName());
         }
 
         if(!userUpdate.getLastName().isEmpty()){
-            currentUser.setLastName(userUpdate.getEmail());
+            currentUser.setLastName(userUpdate.getLastName());
         }
 
         if(!userUpdate.getAge().isEmpty()){
@@ -77,6 +78,17 @@ public class UserService implements UserDetailsService {
         }
 
         userRepository.save(currentUser);
+    }
+
+    public void updateDoctor(DoctorProfile doctorProfile, User currentUser){
+
+        if(!doctorProfile.getPosition().isEmpty()){
+            currentUser.setPosition(doctorProfile.getPosition());
+        }
+
+        if(!doctorProfile.getExperience().isEmpty()){
+            currentUser.setExperience(doctorProfile.getExperience());
+        }
     }
 
     public void updateRole(User user,  Map<String, String> form) {
@@ -91,6 +103,55 @@ public class UserService implements UserDetailsService {
             if (roles.contains(key)) {
                 user.getRoles().add(Role.valueOf(key));
             }
+        }
+
+        userRepository.save(user);
+    }
+
+    public void changeRoleAdmin(UserProfile userProfile){
+
+        User user = userRepository.findByUsername(userProfile.getUsername());
+
+        Set<Role> roles = user.getRoles();
+
+        boolean admin = false;
+        for(Role role : roles){
+            if(role.name().equals("ADMIN")){
+                user.getRoles().remove(Role.ADMIN);
+                admin = false;
+                break;
+            }else {
+                admin = true;
+            }
+        }
+        if (admin){
+            user.getRoles().add(Role.ADMIN);
+        }else{
+            user.getRoles().add(Role.USER);
+        }
+        userRepository.save(user);
+    }
+
+    public void changeRoleDoctor(UserProfile userProfile){
+
+        User user = userRepository.findByUsername(userProfile.getUsername());
+
+        Set<Role> roles = user.getRoles();
+
+        boolean doctor = false;
+        for(Role role : roles){
+            if(role.name().equals("DOCTOR")){
+                user.getRoles().clear();
+                doctor = false;
+                break;
+            }else {
+                doctor = true;
+            }
+        }
+        if (doctor){
+            user.getRoles().add(Role.DOCTOR);
+        }else{
+            user.getRoles().add(Role.USER);
         }
 
         userRepository.save(user);

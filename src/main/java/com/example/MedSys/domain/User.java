@@ -38,7 +38,9 @@ public class User implements UserDetails {
     private String lastName;
     private String age;
     private String phoneNumber;
+
     private String position;
+    private String experience;
 
     private boolean active;
 

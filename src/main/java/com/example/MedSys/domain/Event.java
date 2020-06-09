@@ -20,7 +20,7 @@ public class Event {
 
     private String start;
 
-    private Long doctorId;
+    private String doctorUsername;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

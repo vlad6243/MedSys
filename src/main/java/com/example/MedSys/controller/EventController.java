@@ -21,9 +21,14 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @GetMapping
+    @GetMapping("/userEvents")
     public List<Event> getAllUsersEvent(@AuthenticationPrincipal User user){
         return eventService.findAllEventsForUser(user);
+    }
+
+    @GetMapping("/doctorEvents")
+    public List<Event> getAllDoctorsEvent(@AuthenticationPrincipal User user){
+        return eventService.findAllEventsForDoctor(user);
     }
 
     @PostMapping("/add")
