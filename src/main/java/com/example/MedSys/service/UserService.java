@@ -89,6 +89,7 @@ public class UserService implements UserDetailsService {
         if(!doctorProfile.getExperience().isEmpty()){
             currentUser.setExperience(doctorProfile.getExperience());
         }
+        userRepository.save(currentUser);
     }
 
     public void updateRole(User user,  Map<String, String> form) {
