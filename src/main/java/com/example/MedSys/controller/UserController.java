@@ -54,7 +54,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/updateDoctor")
+    @PostMapping("/`updateDoctor`")
     public ResponseEntity<?> updateDoctorProfile(@AuthenticationPrincipal User currentUser,
                                            @RequestBody DoctorProfile doctorProfile){
         try {
